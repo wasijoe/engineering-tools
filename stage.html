@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage 運動計算器</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,"Microsoft JhengHei",sans-serif;color:#192a3e;background:#eef2f6;--muted:#4d6075;--line:#d6e0ea;--accent:#056454}
+*{box-sizing:border-box}body{margin:0}header{background:#15283d;color:white;padding:42px max(22px,calc((100% - 1120px)/2));border-bottom:4px solid #4fd3b5}h1,h2,p{margin:0}h1{font-size:clamp(1.8rem,5vw,2.7rem);letter-spacing:.03em}header p{margin-top:12px;color:#cedce9}
+main{max-width:1164px;margin:auto;padding:26px 22px 40px;display:grid;grid-template-columns:minmax(245px,315px) minmax(0,1fr);gap:22px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 4px 18px #172e4810}h2{font-size:1.14rem;margin-bottom:16px}.field{display:block;margin-bottom:15px;color:#354a61;font-size:.92rem;font-weight:650}.input{display:flex;align-items:center;border:1px solid #aebfd0;border-radius:8px;margin-top:6px;overflow:hidden}.input span{min-width:60px;text-align:right;padding-right:10px;font-weight:500;color:var(--muted)}input{width:100%;min-width:0;padding:10px 9px;border:0;background:white;color:#192a3e;font:inherit;font-size:1rem}.input:focus-within{outline:2px solid var(--accent);outline-offset:2px}input:focus{outline:none}
+button{cursor:pointer;font:inherit;font-weight:650;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:#f6f9fc;color:#28415a}button:focus-visible{outline:2px solid #00886f;outline-offset:2px}.primary{background:var(--accent);color:white;border-color:var(--accent);flex:1}.actions{display:flex;gap:8px}.note{margin-top:14px;color:var(--muted);font-size:.85rem;line-height:1.65}.error{color:#a3252f;margin:12px 0;font-size:.9rem}.result{display:grid;gap:18px}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:9px}.metric{background:#eef7f5;border:1px solid #d5e8e3;border-radius:8px;padding:10px;overflow-wrap:anywhere}.metric span{display:block;color:#415a65;font-size:.86rem}.metric strong{display:block;font-size:1.25rem;margin-top:5px;font-variant-numeric:tabular-nums}.metric small{color:#415a65}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.tabs button[aria-pressed=true]{background:#e1f3ee;border-color:#7db6a9;color:#054f43}canvas{width:100%;height:232px;display:block}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums;white-space:nowrap}td,th{text-align:right;border-bottom:1px solid var(--line);padding:8px 7px}th{color:var(--muted);background:#f4f7fa}td:first-child,th:first-child{text-align:left}details{color:var(--muted);font-size:.88rem;line-height:1.65}summary{cursor:pointer;font-weight:650;color:#28415a}details p{margin-top:8px}code{white-space:normal} [hidden]{display:none!important}
+#jerk-mode{margin:-5px 0 12px}#auto-jerk{margin-bottom:12px}.limit-notes{padding:9px 12px 9px 30px;border-radius:8px;color:#754711;background:#fff4df}.plot{position:relative}.plot canvas{cursor:crosshair}#chart-readout{position:absolute;top:0;right:0;max-width:calc(100% - 74px);pointer-events:none;background:#15283d;color:white;border-radius:6px;padding:4px 8px;font-size:.8rem;font-variant-numeric:tabular-nums}
+@media(max-width:740px){main{grid-template-columns:1fr;padding:16px 12px 28px;gap:14px}.card{padding:16px}header{padding:27px 16px}}
+.cruise-alert{margin-bottom:14px;padding:10px 14px;border:1px solid #e3b36a;border-left:5px solid #a85b11;border-radius:8px;background:#fff1d8;color:#683505;font-size:1.05rem;font-weight:750}
+.metric.under-limit{background:#ffe1eb;border-color:#d9829c;color:#73213e}.metric.under-limit span,.metric.under-limit small{color:#73213e}
+</style>
+</head>
+<body>
+<header><a href="./index.html" style="display:inline-block;color:#b8eadf;margin-bottom:10px">工程工具中心</a><h1>Stage 運動計算器</h1><p>單軸定位 · 限制速度、加速度與 Jerk 的最短時間 S 曲線</p></header>
+<main>
+<form class="card" id="motion">
+<h2>運動條件</h2>
+<label class="field" for="distance">行程（正負代表方向）<span class="input"><input id="distance" type="number" step="any" required value="120"><span>mm</span></span></label>
+<label class="field" for="velocity">速度上限<span class="input"><input id="velocity" type="number" step="any" required value="250"><span>mm/s</span></span></label>
+<label class="field" for="acceleration">加速度上限<span class="input"><input id="acceleration" type="number" step="any" required value="1800"><span>mm/s²</span></span></label>
+<label class="field" for="jerk">Jerk（加加速度）上限<span class="input"><input id="jerk" type="number" step="any" required value="18000"><span>mm/s³</span></span></label>
+<p class="note" id="jerk-mode" aria-live="polite"></p>
+<button type="button" id="auto-jerk" hidden>恢復自動 10 倍</button>
+<div class="actions"><button class="primary">計算</button><button type="button" id="load-example">載入範例</button></div>
+<p class="error" id="error" role="alert" hidden></p>
+<p class="note">起點為 0 mm，起訖速度與加速度皆為 0。上限請輸入正值。計算時間僅包含運動，實際定位須另計穩定時間。</p>
+</form>
+<div class="result" id="results">
+<section class="card" aria-labelledby="result-title"><h2 id="result-title">計算結果</h2>
+<p class="cruise-alert" id="cruise-alert" role="status" hidden>無等速階段</p>
+<div class="metrics" id="metrics" aria-live="polite"></div><p class="note" id="profile"></p><ul class="note limit-notes" id="limit-notes" aria-live="polite" hidden></ul></section>
+<section class="card" aria-labelledby="chart-title"><h2 id="chart-title">運動曲線</h2>
+<div class="tabs" id="tabs" aria-label="曲線類型"></div><p class="note">移動滑鼠或點一下圖表，即可查看座標。</p><div class="plot"><canvas id="chart" role="img"></canvas><output id="chart-readout" hidden></output></div></section>
+<section class="card" aria-labelledby="phase-title"><h2 id="phase-title">各段時間與終點</h2>
+<div class="table"><table><thead><tr><th scope="col">階段</th><th scope="col">時間 (s)</th><th scope="col">階段位移 (mm)</th><th scope="col">終點位置 (mm)</th><th scope="col">終點速度 (mm/s)</th><th scope="col">終點加速度 (mm/s²)</th></tr></thead><tbody id="phases"></tbody></table></div>
+<details class="note"><summary>計算模型</summary><p>採用對稱七段 S 曲線，依行程與限制自動省略時間為零的段落。每段 Jerk 為常數，依序積分得到加速度、速度與位置。峰值顯示絕對值，曲線與各段終點保留方向。</p></details></section>
+</div>
+</main>
+<script src="motion.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
