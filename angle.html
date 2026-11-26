@@ -64,7 +64,7 @@ for (const [source, targetId, factor] of [
 }
 document.getElementById("arcsec-reference").textContent = microradPerArcsec.toFixed(9);
 document.getElementById("microrad-reference").textContent = (1 / microradPerArcsec).toFixed(9);
-for (const microradians of [15, 20, 30, 50, 75]) {
+for (const microradians of [15, 20, 25, 30, 50, 75]) {
   const row = document.createElement("p");
   row.textContent = microradians + " µrad ≈ " + (microradians / microradPerArcsec).toFixed(6) + " arcsec";
   document.getElementById("common-values").append(row);
