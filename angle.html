@@ -16,15 +16,15 @@ main{width:min(100% - 32px,700px);margin:22px auto}.panel{padding:20px;backgroun
 <header><a href="./index.html">工程工具中心</a><h1>角度單位換算</h1></header>
 <main>
   <section class="panel" aria-label="雙向換算">
-    <h2>角秒換算微弧度</h2>
-    <div class="fields">
-      <label for="arcsec">角秒（arcsec）<input id="arcsec" type="number" step="any" inputmode="decimal" value="1"></label>
-      <label for="microrad-result">微弧度（µrad）<input id="microrad-result" type="text" readonly></label>
-    </div>
     <h2>微弧度換算角秒</h2>
     <div class="fields">
       <label for="microrad">微弧度（µrad）<input id="microrad" type="number" step="any" inputmode="decimal" value="1"></label>
       <label for="arcsec-result">角秒（arcsec）<input id="arcsec-result" type="text" readonly></label>
+    </div>
+    <h2>角秒換算微弧度</h2>
+    <div class="fields">
+      <label for="arcsec">角秒（arcsec）<input id="arcsec" type="number" step="any" inputmode="decimal" value="1"></label>
+      <label for="microrad-result">微弧度（µrad）<input id="microrad-result" type="text" readonly></label>
     </div>
     <p id="error" class="error" role="alert" hidden>請輸入有效數字，並確認結果在可換算範圍內。</p>
   </section>
@@ -32,6 +32,10 @@ main{width:min(100% - 32px,700px);margin:22px auto}.panel{padding:20px;backgroun
     <h2 id="reference">換算基準</h2>
     <p>1 arcsec ≈ <strong id="arcsec-reference"></strong> µrad</p>
     <p>1 µrad ≈ <strong id="microrad-reference"></strong> arcsec</p>
+  </section>
+  <section class="panel reference" aria-labelledby="common">
+    <h2 id="common">常用規範</h2>
+    <div id="common-values"></div>
   </section>
 </main>
 <script>
@@ -60,6 +64,11 @@ for (const [source, targetId, factor] of [
 }
 document.getElementById("arcsec-reference").textContent = microradPerArcsec.toFixed(9);
 document.getElementById("microrad-reference").textContent = (1 / microradPerArcsec).toFixed(9);
+for (const microradians of [15, 20, 30, 50, 75]) {
+  const row = document.createElement("p");
+  row.textContent = microradians + " µrad ≈ " + (microradians / microradPerArcsec).toFixed(6) + " arcsec";
+  document.getElementById("common-values").append(row);
+}
 </script>
 </body>
 </html>
