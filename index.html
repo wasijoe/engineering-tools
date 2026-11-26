@@ -3,23 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="精密運動平台工程工具中心，使用 Stage 運動計算器規劃單軸運動。">
+<meta name="description" content="精密運動平台工程工具中心，提供 Stage 運動計算及角度單位換算。">
 <title>精密運動平台｜工程工具中心</title>
 <style>
 :root{font-family:system-ui,"Microsoft JhengHei",sans-serif;color:#192a3e;background:#eef2f6;line-height:1.5}
 *{box-sizing:border-box}body{margin:0}header{background:#15283d;color:#fff;border-bottom:4px solid #4fd3b5;padding:40px max(20px,calc((100% - 940px)/2))}h1{font-size:clamp(1.45rem,5vw,2.35rem);margin:0}main{width:min(100% - 32px,940px);margin:28px auto 45px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{display:block;background:#fff;border:1px solid #d6e0ea;border-radius:14px;padding:18px 20px;text-decoration:none;color:inherit}.card h2{font-size:1.08rem;margin:0 0 5px}.card p{margin:0;color:#4d6075;font-size:.93rem}.live{background:#f2fffb;border:2px solid #178370;padding:17px 19px}.live:hover{background:#e1f6ef}.live:focus-visible{outline:3px solid #056454;outline-offset:3px}.planned small{display:block;color:#4d6075;margin-top:8px;font-size:.82rem}.live small{display:block;color:#056454;font-weight:700;margin-top:8px;font-size:.9rem}
 @media(max-width:560px){header{padding-top:28px;padding-bottom:28px}main{margin-top:16px}.grid{grid-template-columns:1fr;gap:10px}}
+.group-title{font-size:1.22rem;margin:0 0 12px}.card h3{font-size:1.08rem;margin:0 0 5px}.divider{border:0;border-top:1px solid #aebfd0;margin:26px 0}
 </style>
 </head>
 <body>
 <header><h1>精密運動平台｜工程工具中心</h1></header>
-<main class="grid" aria-label="工程工具">
-  <a class="card live" href="./stage.html"><h2>Stage 運動計算</h2><p>速度、加速度、Jerk、行程</p><small>開啟計算器</small></a>
-  <section class="card planned"><h2>滑台推力測試</h2><p>啟動阻力、移動阻力</p><small>規劃中</small></section>
-  <section class="card planned"><h2>雷干數據分析</h2><p>絕對精度、重複精度</p><small>規劃中</small></section>
-  <section class="card planned"><h2>線性馬達選型</h2><p>推力、負載、加速度</p><small>規劃中</small></section>
-  <section class="card planned"><h2>角度誤差換算</h2><p>arcsec、µrad、µm</p><small>規劃中</small></section>
-  <section class="card planned"><h2>出貨檢驗管理</h2><p>機台規格、量測紀錄</p><small>規劃中</small></section>
+<main aria-label="工程工具">
+  <section aria-labelledby="available">
+    <h2 class="group-title" id="available">可使用</h2>
+    <div class="grid">
+      <a class="card live" href="./stage.html"><h3>Stage 運動計算</h3><p>速度、加速度、Jerk、行程</p><small>開啟計算器</small></a>
+      <a class="card live" href="./angle.html"><h3>角度單位換算</h3><p>arcsec 與 µrad 雙向換算</p><small>開啟換算器</small></a>
+    </div>
+  </section>
+  <hr class="divider">
+  <section aria-labelledby="planned">
+    <h2 class="group-title" id="planned">規劃中</h2>
+    <div class="grid">
+      <section class="card planned"><h3>滑台推力測試</h3><p>啟動阻力、移動阻力</p></section>
+      <section class="card planned"><h3>雷干數據分析</h3><p>絕對精度、重複精度</p></section>
+      <section class="card planned"><h3>線性馬達選型</h3><p>推力、負載、加速度</p></section>
+      <section class="card planned"><h3>出貨檢驗管理</h3><p>機台規格、量測紀錄</p></section>
+    </div>
+  </section>
 </main>
 </body>
 </html>

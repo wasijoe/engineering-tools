@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>角度單位換算｜工程工具中心</title>
+<style>
+:root{font-family:system-ui,"Microsoft JhengHei",sans-serif;color:#192a3e;background:#eef2f6;line-height:1.5}
+*{box-sizing:border-box}body{margin:0}header{background:#15283d;color:white;border-bottom:4px solid #4fd3b5;padding:32px max(16px,calc((100% - 700px)/2))}header a{color:#b8eadf}h1{font-size:clamp(1.55rem,5vw,2.2rem);margin:8px 0 0}
+main{width:min(100% - 32px,700px);margin:22px auto}.panel{padding:20px;background:white;border:1px solid #d6e0ea;border-radius:14px;margin-bottom:14px}.panel p{margin:0 0 12px;color:#4d6075}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}label{display:grid;gap:6px;font-weight:650}input{width:100%;min-width:0;color:inherit;background:white;border:1px solid #aebfd0;border-radius:8px;padding:10px;font:inherit;font-weight:400;font-variant-numeric:tabular-nums}input:focus-visible{outline:2px solid #056454;outline-offset:2px}.panel .error{margin:12px 0 0;color:#a3252f}.reference{background:#f2fffb;border-color:#b5dcd3}h2{font-size:1.1rem;margin:0 0 9px}.reference p{margin:4px 0;color:#192a3e;font-variant-numeric:tabular-nums} [hidden]{display:none}
+@media(max-width:520px){header{padding-top:22px;padding-bottom:22px}.fields{grid-template-columns:minmax(0,1fr)}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<header><a href="./index.html">工程工具中心</a><h1>角度單位換算</h1></header>
+<main>
+  <section class="panel" aria-label="雙向換算">
+    <p>在任一欄輸入，另一欄會立即換算。</p>
+    <div class="fields">
+      <label for="arcsec">角秒（arcsec）<input id="arcsec" type="number" step="any" inputmode="decimal" value="1"></label>
+      <label for="microrad">微弧度（µrad）<input id="microrad" type="number" step="any" inputmode="decimal"></label>
+    </div>
+    <p id="error" class="error" role="alert" hidden>請輸入有效數字，並確認結果在可換算範圍內。</p>
+  </section>
+  <section class="panel reference" aria-labelledby="reference">
+    <h2 id="reference">換算基準</h2>
+    <p>1 arcsec ≈ <strong id="arcsec-reference"></strong> µrad</p>
+    <p>1 µrad ≈ <strong id="microrad-reference"></strong> arcsec</p>
+  </section>
+</main>
+<script>
+"use strict";
+const arcsec = document.getElementById("arcsec");
+const microrad = document.getElementById("microrad");
+const error = document.getElementById("error");
+const microradPerArcsec = Math.PI * 1e6 / (180 * 3600);
+
+function convert(source, target, factor) {
+  const value = source.valueAsNumber;
+  const result = value * factor;
+  const valid = Number.isFinite(result) && (value === 0 || result !== 0);
+  target.value = valid ? String(Number(result.toPrecision(12))) : "";
+  error.hidden = !source.validity.badInput && (valid || source.value === "");
+}
+
+arcsec.addEventListener("input", () => convert(arcsec, microrad, microradPerArcsec));
+microrad.addEventListener("input", () => convert(microrad, arcsec, 1 / microradPerArcsec));
+document.getElementById("arcsec-reference").textContent = microradPerArcsec.toFixed(9);
+document.getElementById("microrad-reference").textContent = (1 / microradPerArcsec).toFixed(9);
+convert(arcsec, microrad, microradPerArcsec);
+</script>
+</body>
+</html>
